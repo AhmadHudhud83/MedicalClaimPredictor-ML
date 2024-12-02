@@ -1,0 +1,4 @@
+#Exclude .venv folder
+.venv/
+#Exclude .dvc folder
+.dvc/
