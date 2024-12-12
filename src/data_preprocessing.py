@@ -4,7 +4,8 @@ import numpy as np
 import os
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 #Reading the Train data
 train_data = pd.read_csv('./data/raw/train.csv')
 #Reading the Test data 
@@ -22,7 +23,7 @@ def handle_missing_values(df):
     most_frequent_category= df["Marital Status"].mode()[0]
     
     # Replace missing values/Unkowns with most_frequent_category
-    df["Marital Status"] = df["Marital Status"].replace(4, most_frequent_category) # 4 stands for Unkown Marital Status 
+    df["Marital Status"] = df["Marital Status"].replace("Unknown", most_frequent_category) # 4 stands for Unkown Marital Status 
     
     
 
@@ -60,6 +61,7 @@ def one_hot_encoder(df):
   encoded_data = encoder.fit_transform(df[['Insurance']])
   encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(['Insurance']))
   df = pd.concat([df, encoded_df], axis=1)
+
   # Dropping the original Insurance column
   df.drop('Insurance', axis=1, inplace=True)
   return df
@@ -69,12 +71,49 @@ def scaler(df,features):
     scaler = StandardScaler()
     df[features] = scaler.fit_transform(df[features])
     
+
+
+# Winsorization function for the target variable
+def winsorization(df,col, lower_quantile=0.17, upper_quantile=0.88):
+    lower_bound = df[col].quantile(lower_quantile)
+    upper_bound = df[col].quantile(upper_quantile)
+    df[col] = df[col].clip(lower_bound,upper_bound)
+    return df
+
+#Applying square transforming function to whole target variable
+def transform(df,col,type="square"):
     
+    if type =="square":
+        df[col] = np.square(df[col] )
+    elif type =="sqrt":
+        df[col] = np.sqrt(df[col] )
+  
+    
+    return df
+
+# Box plot function to detect outliers of the target
+def box_plot(df,col,label):
+  
+    plt.figure(figsize=(8, 4))
+    sns.boxplot(df[col])
+    plt.title(label)
+    plt.ylabel(col)
+    plt.show()
 
 
 #Applying missing values handlers for training & testing sets
 train_data_processed=handle_missing_values(train_data)
 test_data_processed=handle_missing_values(test_data)
+
+
+#Applying transformation functions for training & testing sets
+
+transform_funcs = [winsorization,transform]
+
+for f in transform_funcs:
+    train_data_processed= f(train_data_processed,"Amount")
+    test_data_processed = f(test_data_processed,"Amount")
+
 #Applying encoding functions for training & testing sets
 funcs = [target_encoder,label_encoder,one_hot_encoder]
 
@@ -96,15 +135,11 @@ print(unique_values)
 #Checking some samples of preprocessed data
 print(train_data_processed.head())
 
+#Checking Outliers for target variable using box plot
 
 
-
-
-
-
-
-
-
+box_plot(train_data_processed,"Amount","Training Dataset")
+box_plot(test_data_processed,"Amount","Testing Dataset")
 
 
 #Creating folder for processed data
@@ -112,6 +147,6 @@ data_path = os.path.join("data","processed")
 os.makedirs(data_path)
 
 # Storing Processed training & testing sets as outputs
-
+print("HERE BODY ! , THE SHAPE AFTER PREPROCESSING !! ",train_data_processed.shape)
 train_data_processed.to_csv(os.path.join(data_path,"train_processed.csv"),index=False)
 test_data_processed.to_csv(os.path.join(data_path,"test_processed.csv"),index=False)

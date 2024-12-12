@@ -2,3 +2,5 @@
 .venv/
 #Exclude .dvc folder
 .dvc/
+/model.pkl
+/metrics.json
