@@ -37,44 +37,59 @@ def load_model(filepath:str)->RandomForestRegressor:
     except Exception as e:
         raise Exception(print(f"Error loading the model from {filepath} : {e}"))
     
+# Plotting predicted vs actual values for test set
+def plot(Y:np.ndarray,data_prediction:pd.Series,set:str,color:str)->None:
+    try:
+        plt.figure(figsize=(10, 6))
+        plt.scatter(Y, data_prediction, color=color, alpha=0.5)
+        plt.plot([Y.min(), Y.max()], [Y.min(), Y.max()], color='red', linewidth=2)
+        plt.xlabel('Actual Values')
+        plt.ylabel('Predicted Values')
+        plt.title(f'Actual vs Predicted Values ({set} Set)')
+        plt.show()
+
+    except Exception as e :
+        raise Exception(f"Error occured during plotting predicated vs actual values : {e}")
+
+        
+
 # Model Evaluation function
-def evaluation_model(model:RandomForestRegressor,X_test: pd.DataFrame,Y_test :pd.Series)->dict:
+def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.DataFrame,Y_train :pd.Series)->dict:
     try:
         # Loading params
         params = yaml.safe_load(open("params.yaml","r"))
         test_size = params["data_collection"]["test_size"]
-        n_estimators = params["model_building"]["n_estimators"]
-        # Predicting test set
+        kwargs= params["model_building"]["kwargs"]
+        model_name = params["model_building"]["model_name"]
+        # Predicting test & train sets
         test_data_prediction = model.predict(X_test)
-
+        train_data_prediction = model.predict(X_train)
         # Defining r square measure
         r2_test = r2_score(Y_test, test_data_prediction)
-
+        r2_train = r2_score(Y_train,train_data_prediction)
         # For debugging
         print(X_test.shape)
+        print(X_train.shape)
         print('R squared value (Test): ', r2_test)
+        print('R squared value (Train): ', r2_train)
+        
+        # Plotting test & train datasets vs actual values diagrams
 
+        plot(Y_test,test_data_prediction,"Test","green")
+        plot(Y_train,train_data_prediction,"Train","blue")
 
-        # Plotting predicted vs actual values
-
-        plt.figure(figsize=(10, 6))
-        plt.scatter(Y_test, test_data_prediction, color='green', alpha=0.5)
-        plt.plot([Y_test.min(), Y_test.max()], [Y_test.min(), Y_test.max()], color='red', linewidth=2)
-        plt.xlabel('Actual Values')
-        plt.ylabel('Predicted Values')
-        plt.title('Actual vs Predicted Values (Test Set)')
-        plt.show()
-
-        #
+        # Logging experiment results
         with Live(save_dvc_exp=True) as live:
             live.log_metric("r2_test",r2_test)
 
             live.log_param("test_size",test_size)
-            live.log_param("n_estimators",n_estimators)
+            live.log_param("kwargs",kwargs)
+            live.log_param("model_name",model_name)
 
         # Returning metrics dictionary
         metrics_dict= {
-                 "r2_test":r2_test
+                 "r2_test":r2_test,
+                 "r2_train":r2_train
             }
         return metrics_dict
     except Exception as e:
@@ -94,20 +109,24 @@ def main():
     try:
         # Defining data , model and metrics paths
         test_data_path = "./data/interim/test_engineered.csv"
+        train_data_path = "./data/interim/train_engineered.csv"
         model_path = "models/model.pkl"
         metrics_path = "reports/metrics.json"
 
-        # Loading teset data
+        # Loading test & prepare datasets
         test_data =load_data(test_data_path)
-
+        train_data = load_data(train_data_path)
         # Defining X-test & Y-test
         X_test,Y_test = prepare_data(test_data)
+
+        # Defining X-train & Y-train
+        X_train , Y_train = prepare_data(train_data)
 
         # Loading Model
         model = load_model(model_path)
 
         # Getting metrics based on model and test set
-        metrics = evaluation_model(model,X_test, Y_test)
+        metrics = evaluation_model(model,X_test, Y_test,X_train,Y_train)
 
         # Saving results of metrics
         save_metrics(metrics,metrics_path)

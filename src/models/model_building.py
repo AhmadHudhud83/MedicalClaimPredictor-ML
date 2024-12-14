@@ -5,14 +5,15 @@ import os
 import pickle
 import yaml
 from sklearn.ensemble import RandomForestRegressor
-
+from sklearn.tree import DecisionTreeRegressor
+import xgboost as xgb
 # Loading parameters function from params.yaml file
 def load_params(params_path:str)->int:
     try:
 
         with open(params_path,"r") as f:
             params = yaml.safe_load(f)
-        return params["model_building"]["n_estimators"]
+        return params
     except Exception as e :
         raise Exception(f"Error loading parameters from {params_path}  : {e}")
 
@@ -34,21 +35,31 @@ def prepare_data(df:pd.DataFrame)->tuple[pd.DataFrame,pd.Series]:
     except Exception as e:
         raise Exception(f"Error Preparing Datasets : {e}")
 
+# Get Model function
+def get_model(model_name:str,**kwargs):
+    models = {
+        "random_forest":RandomForestRegressor,
+        "decision_tree":DecisionTreeRegressor ,
+        "xgboost":xgb.XGBRegressor
+    }
+    if model_name not in models:
+        raise ValueError(f"Unsupported model : {model_name}")
+    return models[model_name](**kwargs)
 
 # Training Model function 
-def train_model(x_train:pd.DataFrame, y_train : pd.Series,n_estimators:int)->RandomForestRegressor:
+def train_model(x_train:pd.DataFrame, y_train : pd.Series,model_name:str,kwargs:dict):
     
     try:
-        #Applying RandomForest Regressor to fit the data
+        #Applying Regression Model 
+        model = get_model(model_name,**kwargs)
 
-        rfg = RandomForestRegressor(bootstrap=True,n_estimators=n_estimators,max_depth=13,min_samples_leaf=1,min_samples_split=18)
-        rfg.fit(x_train, y_train)
-        return rfg
+        model.fit(x_train, y_train)
+        return model
     except Exception as e:
         print(f"Error in training the model : {e}")
 
 # Saving Model function
-def save_model(model:RandomForestRegressor, filepath:str) -> None:
+def save_model(model, filepath:str) -> None:
     try:
         with open(filepath,"wb") as f:
 
@@ -65,16 +76,19 @@ def main():
         model_save_path = "models/model.pkl"
 
         # Loading hyperparameters 
-        n_estimators =load_params(params_path)
 
-        # Loading the train dataset
+        
+        params = load_params(params_path)
+        model_name = params["model_building"]["model_name"]
+        model_kwargs = params["model_building"]["kwargs"]
+        # Loading the train dataset 
         train_dataset =load_data(train_data_path)
        
         # Preparing x_train , y_train data for fitting
         x_train , y_train = prepare_data(train_dataset)
         
         # Training the model & fitting the data
-        model = train_model(x_train,y_train,n_estimators)
+        model = train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
         
         # Saving the model
         save_model(model,model_save_path)

@@ -27,7 +27,8 @@ stages:
     - data/interim
     - src/models/model_building.py
     params:
-    - model_building.n_estimators
+    - model_building.model_name
+    - model_building.kwargs
     outs:
     - models/model.pkl
   model_evaluation:
