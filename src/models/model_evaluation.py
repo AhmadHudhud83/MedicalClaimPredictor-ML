@@ -8,7 +8,8 @@ import json
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
-
+from dvclive import Live
+import yaml
 
 # Loading Data Function
 def load_data(filepath:str)->pd.DataFrame:
@@ -39,6 +40,10 @@ def load_model(filepath:str)->RandomForestRegressor:
 # Model Evaluation function
 def evaluation_model(model:RandomForestRegressor,X_test: pd.DataFrame,Y_test :pd.Series)->dict:
     try:
+        # Loading params
+        params = yaml.safe_load(open("params.yaml","r"))
+        test_size = params["data_collection"]["test_size"]
+        n_estimators = params["model_building"]["n_estimators"]
         # Predicting test set
         test_data_prediction = model.predict(X_test)
 
@@ -60,7 +65,13 @@ def evaluation_model(model:RandomForestRegressor,X_test: pd.DataFrame,Y_test :pd
         plt.title('Actual vs Predicted Values (Test Set)')
         plt.show()
 
-        
+        #
+        with Live(save_dvc_exp=True) as live:
+            live.log_metric("r2_test",r2_test)
+
+            live.log_param("test_size",test_size)
+            live.log_param("n_estimators",n_estimators)
+
         # Returning metrics dictionary
         metrics_dict= {
                  "r2_test":r2_test

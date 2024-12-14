@@ -1,0 +1,4 @@
+[core]
+    remote = ahmad-hudhud-remote
+['remote "ahmad-hudhud-remote"']
+    url = C:\Users\Gigabyte\AppData\Local\Temp\dvc1
