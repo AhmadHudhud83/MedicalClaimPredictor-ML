@@ -3,8 +3,8 @@
 .venv/
 #Exclude .dvc folder
 .dvc/
-/model.pkl
-/metrics.json
+/models/model.pkl
+/reports/metrics.json
 
 
 # Byte-compiled / optimized / DLL files
