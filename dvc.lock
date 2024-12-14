@@ -66,14 +66,13 @@ stages:
       size: 3290
     params:
       params.yaml:
-        model_building.kwargs:
-          n_estimators: 500
-        model_building.model_name: random_forest
+        model_building.kwargs: {}
+        model_building.model_name: xgboost
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: cd2cee71c1bb83494cc454406d3906d8
-      size: 1841982017
+      md5: 45dbc8dc85e8e37531d38ecb4db96b26
+      size: 484881
   model_evaluation:
     cmd: python src/models/model_evaluation.py
     deps:
