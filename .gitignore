@@ -3,9 +3,7 @@
 .venv/
 #Exclude .dvc folder
 .dvc/
-/models/model.pkl
-/reports/metrics.json
-/dvclive
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
