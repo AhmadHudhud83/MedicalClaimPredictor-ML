@@ -198,7 +198,7 @@ def main():
 
         # Defining data path
         raw_data_path = "./data/raw"
-        processed_data_path = "/data/processed"
+        processed_data_path = "./data/processed"
 
         #Loading params
         params_path = "params.yaml"
@@ -212,6 +212,7 @@ def main():
         # Loading Datasets
         train_data = load_data(os.path.join(raw_data_path,"train.csv"))
         test_data = load_data(os.path.join(raw_data_path,"test.csv"))
+        
 
         # Applying missing values handlers for training & testing sets
         train_data_processed = handle_missing_values(train_data)
@@ -242,7 +243,7 @@ def main():
 
         features_to_scale = ["Severity","Age","Marital Status","Specialty"]
         train_data_processed= scaler(train_data_processed,features_to_scale)
-        test_data_processed=    (test_data_processed,features_to_scale)
+        test_data_processed=  scaler  (test_data_processed,features_to_scale)
 
 
 
@@ -262,7 +263,7 @@ def main():
 
         #Creating folder for processed data
         
-        os.makedirs(processed_data_path)
+        os.makedirs(processed_data_path,exist_ok=True)
 
         # Storing Processed training & testing sets as outputs
      
