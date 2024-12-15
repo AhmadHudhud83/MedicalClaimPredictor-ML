@@ -100,8 +100,9 @@ def main():
         # Training the model & fitting the data
 
 
-        model =train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
 
+        model_train =  RandomForestRegressor(bootstrap=True,n_estimators=271,max_depth=13,min_samples_leaf=1,min_samples_split=18)# train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
+        model = model_train.fit(x_train,y_train)
         # Saving the model
         save_model(model,model_save_path)
 

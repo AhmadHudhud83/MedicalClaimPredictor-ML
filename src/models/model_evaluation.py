@@ -87,7 +87,7 @@ def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.Da
         # Logging experiment results
         with Live(save_dvc_exp=True) as live:
             live.log_metric("r2_test",r2_test)
-
+            live.log_metric("r2_train",r2_train)
             live.log_param("test_size",test_size)
             live.log_param("kwargs",kwargs)
             live.log_param("model_name",model_name)
@@ -113,7 +113,7 @@ def save_metrics(metrics_dict:dict,metrics_path:str)->None:
         raise Exception(f"Error saving metrics to {metrics_path} : {e}")
 
 # Main function
-
+x=421412
 def main():
     try:
         # Defining data , model and metrics paths

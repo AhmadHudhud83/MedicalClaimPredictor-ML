@@ -97,6 +97,26 @@ def one_hot_encoder(df:pd.DataFrame)->pd.DataFrame:
 
     # Dropping the original Insurance column
     df.drop('Insurance', axis=1, inplace=True)
+
+
+
+
+        #Assuming 'dataset' is your original dataframe
+
+    # Initialize the OneHotEncoder
+    encoder = OneHotEncoder(sparse_output=False, drop='first')  # drop='first' to avoid the dummy variable trap
+
+    # Reshape the 'Specialty' column to a 2D array (necessary for sklearn)
+    specialty_encoded = encoder.fit_transform(df[['Specialty']])
+
+    # Convert the encoded array into a DataFrame with column names as the unique values in 'Specialty'
+    encoded_df = pd.DataFrame(specialty_encoded, columns=encoder.get_feature_names_out(['Specialty']))
+
+    # Concatenate the encoded columns with the original dataset (excluding the original 'Specialty' column)
+    df = pd.concat([df.drop('Specialty', axis=1), encoded_df], axis=1)
+
+    # Checking the first few rows of the updated dataset
+    # df_encoded.head()
     return df
   
   except Exception as e:
@@ -192,6 +212,7 @@ def load_params(params_path:str):
         raise Exception(f"Error loading parameters from {params_path}  : {e}")
 
 
+
 def main():
     # General Excepetion
     try:
@@ -233,7 +254,7 @@ def main():
             
 
         #Applying encoding functions for training & testing sets
-        encoding_funcs = [target_encoder,label_encoder,one_hot_encoder]
+        encoding_funcs = [label_encoder,one_hot_encoder]
 
         for function in encoding_funcs:
             train_data_processed= function(train_data_processed)
@@ -241,7 +262,7 @@ def main():
 
         #Applying scaler function for training & testing sets
 
-        features_to_scale = ["Severity","Age","Marital Status","Specialty"]
+        features_to_scale = ["Severity","Age","Marital Status"]
         train_data_processed= scaler(train_data_processed,features_to_scale)
         test_data_processed=  scaler  (test_data_processed,features_to_scale)
 
@@ -270,6 +291,9 @@ def main():
         save_data(train_data_processed,os.path.join(processed_data_path,"train_processed.csv"))
         save_data(test_data_processed,os.path.join(processed_data_path,"test_processed.csv"))
         print(train_data_processed.info())
+
+        train_data_processed.hist(bins =50 ,figsize=(12,8))
+        plt.show()
     except Exception as e :
         raise Exception(f"An Error occured : {e}")
 

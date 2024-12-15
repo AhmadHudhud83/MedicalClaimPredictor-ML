@@ -5,6 +5,7 @@ stages:
     - src/data/data_collection.py
     params:
     - data_collection.test_size
+    - data_collection.batch_size
     outs:
     - data/raw
   data_preprocessing:
@@ -12,6 +13,12 @@ stages:
     deps:
     - data/raw
     - src/data/data_preprocessing.py
+    params:
+    - data_preprocessing.apply_winsorization
+    - data_preprocessing.lower_quantile
+    - data_preprocessing.upper_quantile
+    - data_preprocessing.apply_boxcox
+    - data_preprocessing.transformation_type
     outs:
     - data/processed
   feature_engineering:

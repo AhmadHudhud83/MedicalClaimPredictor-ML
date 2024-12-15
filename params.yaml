@@ -11,18 +11,18 @@ data_preprocessing:
   apply_boxcox: False
 
 model_building:
-  model_name: "xgboost"
+  model_name: "random_forest"
   kwargs:
-    colsample_bytree: 1
-    gamma: 0.32
-    learning_rate: 0.012
-    max_depth: 10
-    min_child_weight: 1
-    n_estimators: 494
-    subsample: 0.85
+    # colsample_bytree: 1
+    # gamma: 0.32
+    # learning_rate: 0.012
+    # max_depth: 10
+    # min_child_weight: 1
+    # n_estimators: 494
+    # subsample: 0.85
 
-    # bootstrap: True
-    # n_estimators: 271
-    # max_depth: 13
-    # min_samples_leaf: 1
-    # min_samples_split : 18
+    bootstrap: True
+    n_estimators: 271
+    max_depth: 13
+    min_samples_leaf: 1
+    min_samples_split : 18
