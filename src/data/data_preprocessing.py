@@ -6,7 +6,8 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 import seaborn as sns
 import matplotlib.pyplot as plt
-from dvclive import Live
+import yaml
+from scipy.stats import boxcox
 
 #Reading the Train & Test Datasets
 def load_data(filepath:str)->pd.DataFrame:
@@ -107,7 +108,7 @@ def scaler(df:pd.DataFrame,features:list)->None:
 
      scaler = StandardScaler()
      df[features] = scaler.fit_transform(df[features])
-
+     return df
     except Exception as e:
         raise Exception(f"Error in scaling features : {features}  : {e}")
     
@@ -127,31 +128,68 @@ def winsorization(df: pd.DataFrame ,col:str , lower_quantile=0.17 , upper_quanti
 
 #Applying square transforming function to whole target variable
 
-def transform(df : pd.DataFrame,col:str,type="square") ->pd.DataFrame:
-    try: 
-        if type =="square":
-            df[col] = np.square(df[col] )
-        elif type =="sqrt":
-            df[col] = np.sqrt(df[col] )
-    
-        
-        return df
+def transform(df : pd.DataFrame,col:str,transformation_type,apply_boxcox:bool) ->pd.DataFrame:
+
+     
+    transformation_types = {
+            "square":lambda x: np.square(x),
+            "cube":lambda x :x**2.5,
+            "sqrt":lambda x : np.sqrt(x),
+            "log2":lambda x :np.log2(x),
+            
+     }
+
+    # boxcox transformation flag
+    if apply_boxcox:
+        try:
+            df[col],fittedlambada = boxcox(df[col])
+        except Exception as e:
+            raise ValueError(f"Error applying Box-Cox transformation:  {e}")
+    try:
+        df[col] = transformation_types[transformation_type](df[col])
     except Exception as e:
-       raise Exception(f"Error in transformation process for column : {col}, type of transformation method : {type} :  {e}")
+        raise ValueError(f"Error applying {transformation_type} transformation: {e}")
+
+    if transformation_type not in transformation_types:
+            raise ValueError(f"Unsupported transformation type : {transformation_type}")
+
+    return df
+
+    
        
+   
        
-# Box plot function to detect outliers of the target
-def box_plot(df:pd.DataFrame,col:str,label:str)->None:
+# target plotting for box plot & histogram  to evaluate  outliers & distribution of the target variable
+def target_plots(df:pd.DataFrame,col:str,label:str)->None:
     
     try:
-
+    # Showing boxplot to detect outliers
         plt.figure(figsize=(8, 4))
         sns.boxplot(df[col])
         plt.title(label)
         plt.ylabel(col)
         plt.show()
+
+    #Showing the histogram of distribution
+
+        plt.figure(figsize=(8, 6))
+        sns.histplot(df[col], kde=True, bins=30)  
+        plt.title("Amount Distribution")
+        plt.xlabel("Amount")
+        plt.ylabel("Frequency")
+        plt.show()
     except Exception as e:
-        Exception(f"Error plotting box plot for column : {col} :  {e}")
+        raise Exception(f"Error plotting box plot for column : {col} :  {e}")
+
+# Loading hyperparameters
+def load_params(params_path:str):
+    try:
+
+        with open(params_path,"r") as f:
+            params = yaml.safe_load(f)
+        return params
+    except Exception as e :
+        raise Exception(f"Error loading parameters from {params_path}  : {e}")
 
 
 def main():
@@ -160,7 +198,16 @@ def main():
 
         # Defining data path
         raw_data_path = "./data/raw"
-        processed_data_path = "./data/processed"
+        processed_data_path = "/data/processed"
+
+        #Loading params
+        params_path = "params.yaml"
+        params = load_params(params_path)
+        apply_winsorization =params["data_preprocessing"]["apply_winsorization"]
+        upper_quantile = params["data_preprocessing"]["upper_quantile"]
+        lower_quantile = params["data_preprocessing"]["lower_quantile"]
+        transformation_type = params["data_preprocessing"]["transformation_type"]
+        apply_boxcox = params["data_preprocessing"]["apply_boxcox"]
 
         # Loading Datasets
         train_data = load_data(os.path.join(raw_data_path,"train.csv"))
@@ -174,11 +221,15 @@ def main():
         
         #Applying transformation functions for training & testing sets
 
-        transform_funcs = [winsorization,transform]
+            
+        train_data_processed= transform(train_data_processed,"Amount",transformation_type,apply_boxcox)
+        test_data_processed = transform(test_data_processed,"Amount",transformation_type,apply_boxcox)
 
-        for function in transform_funcs:
-            train_data_processed= function(train_data_processed,"Amount")
-            test_data_processed = function(test_data_processed,"Amount")
+        # winsorization flag
+        if apply_winsorization:
+              train_data_processed= winsorization(train_data_processed,"Amount",lower_quantile,upper_quantile)
+              test_data_processed = winsorization(test_data_processed,"Amount",lower_quantile,upper_quantile)
+            
 
         #Applying encoding functions for training & testing sets
         encoding_funcs = [target_encoder,label_encoder,one_hot_encoder]
@@ -190,8 +241,8 @@ def main():
         #Applying scaler function for training & testing sets
 
         features_to_scale = ["Severity","Age","Marital Status","Specialty"]
-        scaler(train_data_processed,features_to_scale)
-        scaler(test_data_processed,features_to_scale)
+        train_data_processed= scaler(train_data_processed,features_to_scale)
+        test_data_processed=    (test_data_processed,features_to_scale)
 
 
 
@@ -203,10 +254,10 @@ def main():
         print(train_data_processed.head())
 
         #Checking Outliers for target variable using box plot
+    
 
+        target_plots(train_data_processed,"Amount","Training Dataset")
 
-        box_plot(train_data_processed,"Amount","Training Dataset")
-        box_plot(test_data_processed,"Amount","Testing Dataset")
 
 
         #Creating folder for processed data
@@ -217,9 +268,9 @@ def main():
      
         save_data(train_data_processed,os.path.join(processed_data_path,"train_processed.csv"))
         save_data(test_data_processed,os.path.join(processed_data_path,"test_processed.csv"))
-
+        print(train_data_processed.info())
     except Exception as e :
-        Exception(f"An Error occured : {e}")
+        raise Exception(f"An Error occured : {e}")
 
 
 if __name__ == "__main__":

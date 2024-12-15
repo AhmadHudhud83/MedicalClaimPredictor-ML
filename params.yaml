@@ -1,7 +1,28 @@
 data_collection:
-  test_size: 0.2
+  batch_size : 79210         # max value for data set is  : 79210
+  test_size: 0.3
+
+
+data_preprocessing:
+  upper_quantile: 0.88
+  lower_quantile: 0.14
+  apply_winsorization: True
+  transformation_type : "cube"
+  apply_boxcox: False
 
 model_building:
   model_name: "xgboost"
-  kwargs: {}
-    
+  kwargs:
+    colsample_bytree: 1
+    gamma: 0.32
+    learning_rate: 0.012
+    max_depth: 10
+    min_child_weight: 1
+    n_estimators: 494
+    subsample: 0.85
+
+    # bootstrap: True
+    # n_estimators: 271
+    # max_depth: 13
+    # min_samples_leaf: 1
+    # min_samples_split : 18

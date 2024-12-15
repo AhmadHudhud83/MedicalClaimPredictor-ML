@@ -7,7 +7,7 @@ stages:
     - data_collection.test_size
     outs:
     - data/raw
-  pre_processing:
+  data_preprocessing:
     cmd: python src/data/data_preprocessing.py
     deps:
     - data/raw

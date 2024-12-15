@@ -8,9 +8,9 @@ import yaml
 
 
 #Loading the data from csv file to a Pandas DataFrame
-def load_data(filepath: str)->pd.DataFrame:
+def load_data(filepath: str,batch_size:int)->pd.DataFrame:
     try:
-     return pd.read_csv(filepath)
+     return pd.read_csv(filepath).head(batch_size)
     
     except Exception as e:
         raise Exception(f"Error loading data from {filepath} : {e}")
@@ -21,7 +21,7 @@ def load_params(filepath : str)->float:
     try:
         with open(filepath,"r") as f:
             params = yaml.safe_load(f)
-        return params["data_collection"]["test_size"]
+        return params
     except Exception as e:
         raise Exception(f"Error loading parameters from {filepath}:{e}")
 
@@ -56,8 +56,11 @@ def main():
         raw_data_path = os.path.join("data","raw")
 
         #Loading dataset , test_size parameter , training & testing sets
-        dataset = load_data(data_filepath)
-        test_size = load_params(params_filepath)
+        params = load_params(params_filepath)
+        test_size = params["data_collection"]["test_size"]
+        batch_size = params["data_collection"]["batch_size"]
+        dataset = load_data(data_filepath,batch_size)
+        print("shape of raw dataset",dataset.shape) 
         train_data , test_data = split_data(dataset,test_size)
 
 

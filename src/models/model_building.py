@@ -7,6 +7,7 @@ import yaml
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
+from sklearn.model_selection import cross_val_score
 # Loading parameters function from params.yaml file
 def load_params(params_path:str)->int:
     try:
@@ -42,18 +43,25 @@ def get_model(model_name:str,**kwargs):
         "decision_tree":DecisionTreeRegressor ,
         "xgboost":xgb.XGBRegressor
     }
+    
     if model_name not in models:
         raise ValueError(f"Unsupported model : {model_name}")
     return models[model_name](**kwargs)
 
+        
+        
 # Training Model function 
 def train_model(x_train:pd.DataFrame, y_train : pd.Series,model_name:str,kwargs:dict):
     
     try:
-        #Applying Regression Model 
+        #Applying the model
         model = get_model(model_name,**kwargs)
 
+        # Performing cross validation
+        scores = cross_val_score(model,x_train,y_train,cv=5,scoring='r2')
         model.fit(x_train, y_train)
+        print(f"Cross-validation scores: {scores}") 
+        print(f"Mean cross-validation score: {np.mean(scores)}")
         return model
     except Exception as e:
         print(f"Error in training the model : {e}")
@@ -67,6 +75,7 @@ def save_model(model, filepath:str) -> None:
 
     except Exception as e:
         raise Exception(f"Error occured during saving the model to path : {filepath}  : {e}")
+
 def main():
     try:
         # Defining paths & model name
@@ -75,12 +84,13 @@ def main():
         test_data_path = "./data/interim/test_engineered.csv"
         model_save_path = "models/model.pkl"
 
-        # Loading hyperparameters 
-
+        # Loading hyperparameters    
+        
         
         params = load_params(params_path)
         model_name = params["model_building"]["model_name"]
         model_kwargs = params["model_building"]["kwargs"]
+     
         # Loading the train dataset 
         train_dataset =load_data(train_data_path)
        
@@ -88,8 +98,10 @@ def main():
         x_train , y_train = prepare_data(train_dataset)
         
         # Training the model & fitting the data
-        model = train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
-        
+
+
+        model =train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
+
         # Saving the model
         save_model(model,model_save_path)
 

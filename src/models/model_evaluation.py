@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 from dvclive import Live
 import yaml
 
+
 # Loading Data Function
 def load_data(filepath:str)->pd.DataFrame:
     try:
@@ -38,7 +39,7 @@ def load_model(filepath:str)->RandomForestRegressor:
         raise Exception(print(f"Error loading the model from {filepath} : {e}"))
     
 # Plotting predicted vs actual values for test set
-def plot(Y:np.ndarray,data_prediction:pd.Series,set:str,color:str)->None:
+def plot(Y:np.ndarray,data_prediction:pd.Series,set:str,color:str)->str:
     try:
         plt.figure(figsize=(10, 6))
         plt.scatter(Y, data_prediction, color=color, alpha=0.5)
@@ -46,15 +47,19 @@ def plot(Y:np.ndarray,data_prediction:pd.Series,set:str,color:str)->None:
         plt.xlabel('Actual Values')
         plt.ylabel('Predicted Values')
         plt.title(f'Actual vs Predicted Values ({set} Set)')
+        plot_path = f"reports/figures/{set}_plot.png"
+        plt.savefig(plot_path)
         plt.show()
+        plt.close()
 
+        return plot_path
     except Exception as e :
         raise Exception(f"Error occured during plotting predicated vs actual values : {e}")
 
         
 
 # Model Evaluation function
-def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.DataFrame,Y_train :pd.Series)->dict:
+def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.DataFrame,Y_train :pd.Series )->dict:
     try:
         # Loading params
         params = yaml.safe_load(open("params.yaml","r"))
@@ -75,8 +80,9 @@ def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.Da
         
         # Plotting test & train datasets vs actual values diagrams
 
-        plot(Y_test,test_data_prediction,"Test","green")
-        plot(Y_train,train_data_prediction,"Train","blue")
+        test_plot = plot(Y_test,test_data_prediction,"Test","green")
+        train_plot = plot(Y_train,train_data_prediction,"Train","blue")
+  
 
         # Logging experiment results
         with Live(save_dvc_exp=True) as live:
@@ -85,6 +91,8 @@ def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.Da
             live.log_param("test_size",test_size)
             live.log_param("kwargs",kwargs)
             live.log_param("model_name",model_name)
+            live.log_image("test_plot",test_plot)
+            live.log_image("train_plot",train_plot)
 
         # Returning metrics dictionary
         metrics_dict= {
@@ -105,6 +113,7 @@ def save_metrics(metrics_dict:dict,metrics_path:str)->None:
         raise Exception(f"Error saving metrics to {metrics_path} : {e}")
 
 # Main function
+
 def main():
     try:
         # Defining data , model and metrics paths
