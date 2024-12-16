@@ -40,8 +40,8 @@ stages:
     deps:
     - path: data/processed
       hash: md5
-      md5: 0b56e3f7e793cce57412e0376b60c9cf.dir
-      size: 14074847
+      md5: 60f2e3a8788be090cc9d63a0286b8e11.dir
+      size: 14086856
       nfiles: 2
     - path: src/features/feature_engineering.py
       hash: md5
@@ -50,42 +50,44 @@ stages:
     outs:
     - path: data/interim
       hash: md5
-      md5: b38be9513bd73a6fdf77f699c5196e67.dir
-      size: 14014818
+      md5: c8d2e1598dfe8dae893865e0eea023dd.dir
+      size: 14028437
       nfiles: 2
   model_building:
     cmd: python src/models/model_building.py
     deps:
     - path: data/interim
       hash: md5
-      md5: b38be9513bd73a6fdf77f699c5196e67.dir
-      size: 14014818
+      md5: c8d2e1598dfe8dae893865e0eea023dd.dir
+      size: 14028437
       nfiles: 2
     - path: src/models/model_building.py
       hash: md5
-      md5: 2ca792a974e2c17b7bb3cd8ca0cc0d6f
-      size: 3777
+      md5: 01fe949180f25d8c53140591f7d45797
+      size: 3626
     params:
       params.yaml:
         model_building.kwargs:
-          bootstrap: true
-          n_estimators: 271
-          max_depth: 13
-          min_samples_leaf: 1
-          min_samples_split: 18
-        model_building.model_name: random_forest
+          colsample_bytree: 1
+          gamma: 0.32
+          learning_rate: 0.012
+          max_depth: 10
+          min_child_weight: 1
+          n_estimators: 494
+          subsample: 0.85
+        model_building.model_name: xgboost
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 561df753c3072b30a9aba82ec70d419f
-      size: 36303764
+      md5: 6bc994cdbcb3d1921cbd6670aeff707d
+      size: 15816508
   model_evaluation:
     cmd: python src/models/model_evaluation.py
     deps:
     - path: models/model.pkl
       hash: md5
-      md5: 561df753c3072b30a9aba82ec70d419f
-      size: 36303764
+      md5: 6bc994cdbcb3d1921cbd6670aeff707d
+      size: 15816508
     - path: src/models/model_evaluation.py
       hash: md5
       md5: b64fd02e45c0519291491631414cbd7c
@@ -93,8 +95,8 @@ stages:
     outs:
     - path: reports/metrics.json
       hash: md5
-      md5: da130d57e440204b81da43b7b4eb1724
-      size: 76
+      md5: d5aef3e8a41dc69fff9b1aed7fd997b2
+      size: 75
   data_preprocessing:
     cmd: python src/data/data_preprocessing.py
     deps:
@@ -109,7 +111,7 @@ stages:
       size: 10573
     params:
       params.yaml:
-        data_preprocessing.apply_boxcox: false
+        data_preprocessing.apply_boxcox: true
         data_preprocessing.apply_winsorization: true
         data_preprocessing.lower_quantile: 0.14
         data_preprocessing.transformation_type: cube
@@ -117,6 +119,6 @@ stages:
     outs:
     - path: data/processed
       hash: md5
-      md5: 0b56e3f7e793cce57412e0376b60c9cf.dir
-      size: 14074847
+      md5: 60f2e3a8788be090cc9d63a0286b8e11.dir
+      size: 14086856
       nfiles: 2

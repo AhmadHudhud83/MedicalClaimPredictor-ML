@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeRegressor
 import xgboost as xgb
 from sklearn.model_selection import cross_val_score
 # Loading parameters function from params.yaml file
-def load_params(params_path:str)->int:
+def load_params(params_path:str):
     try:
 
         with open(params_path,"r") as f:
@@ -75,7 +75,7 @@ def save_model(model, filepath:str) -> None:
 
     except Exception as e:
         raise Exception(f"Error occured during saving the model to path : {filepath}  : {e}")
-
+checker=2
 def main():
     try:
         # Defining paths & model name
@@ -101,8 +101,8 @@ def main():
 
 
 
-        model_train =  RandomForestRegressor(bootstrap=True,n_estimators=271,max_depth=13,min_samples_leaf=1,min_samples_split=18)# train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
-        model = model_train.fit(x_train,y_train)
+        model =  train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
+        
         # Saving the model
         save_model(model,model_save_path)
 

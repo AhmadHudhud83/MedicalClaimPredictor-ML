@@ -101,7 +101,7 @@ def one_hot_encoder(df:pd.DataFrame)->pd.DataFrame:
 
 
 
-        #Assuming 'dataset' is your original dataframe
+
 
     # Initialize the OneHotEncoder
     encoder = OneHotEncoder(sparse_output=False, drop='first')  # drop='first' to avoid the dummy variable trap
