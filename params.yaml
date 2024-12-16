@@ -8,18 +8,18 @@ data_preprocessing:
   lower_quantile: 0.14
   apply_winsorization: True
   transformation_type : "cube"
-  apply_boxcox: True
+  apply_boxcox: false
 
 model_building:
   model_name: "xgboost"
-  kwargs: 
-    colsample_bytree: 1
-    gamma: 0.32
-    learning_rate: 0.012
-    max_depth: 10
-    min_child_weight: 1
-    n_estimators: 494
-    subsample: 0.85
+  kwargs: {}
+    # colsample_bytree: 1
+    # gamma: 0.32
+    # learning_rate: 0.012
+    # max_depth: 10
+    # min_child_weight: 1
+    # n_estimators: 494
+    # subsample: 0.85
 
     # bootstrap: True
     # n_estimators: 271
