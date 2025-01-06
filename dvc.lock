@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/data/data_collection.py
       hash: md5
-      md5: 02928315024fcfbc116b5176d81c0cdb
-      size: 2425
+      md5: a0ff27c8283340834612d1bdf4b34628
+      size: 2328
     params:
       params.yaml:
         data_collection.batch_size: 79210
@@ -63,8 +63,8 @@ stages:
       nfiles: 2
     - path: src/models/model_building.py
       hash: md5
-      md5: 45a83b542959851466aabbf695b09d7e
-      size: 3819
+      md5: b2eea4c42401c58eef4c659a2aee5e3a
+      size: 4461
     params:
       params.yaml:
         model_building.kwargs:
@@ -81,19 +81,19 @@ stages:
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 3a32862a24007a8353f6eb1dc9b5ec7b
-      size: 8138439
+      md5: b281413e821c9d27217fa12d2a03935b
+      size: 8138445
   model_evaluation:
     cmd: python src/models/model_evaluation.py
     deps:
     - path: models/model.joblib
       hash: md5
-      md5: 3a32862a24007a8353f6eb1dc9b5ec7b
-      size: 8138439
+      md5: b281413e821c9d27217fa12d2a03935b
+      size: 8138445
     - path: src/models/model_evaluation.py
       hash: md5
-      md5: d4a2716596882b91a8b4df3990b59548
-      size: 5279
+      md5: 354f29dc8c8568a6d4873a2be8bdd8b0
+      size: 5682
     outs:
     - path: reports/metrics.json
       hash: md5
@@ -109,14 +109,14 @@ stages:
       nfiles: 2
     - path: src/data/data_preprocessing.py
       hash: md5
-      md5: 2a0e66aed0da5f42499dee24365b8254
-      size: 10288
+      md5: 13905abc5dbb38dcc0c3ded1bf5ea8da
+      size: 8023
     params:
       params.yaml:
         data_preprocessing.apply_boxcox: false
         data_preprocessing.apply_winsorization: true
         data_preprocessing.lower_quantile: 0.14
-        data_preprocessing.transformation_type: cube
+        data_preprocessing.transformation_type: custom
         data_preprocessing.upper_quantile: 0.88
     outs:
     - path: data/processed

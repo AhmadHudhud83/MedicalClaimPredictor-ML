@@ -1,7 +1,7 @@
 # Importing Dependencies
 import pandas as pd
 import numpy as np
-import os
+from sklearn.preprocessing import StandardScaler
 import joblib
 import yaml
 from sklearn.ensemble import RandomForestRegressor
@@ -76,6 +76,13 @@ def save_model(model, filepath:str) -> None:
     except Exception as e:
         raise Exception(f"Error occured during saving the model to path : {filepath}  : {e}")
 
+def scalerFun(df: pd.DataFrame, features: list) -> pd.DataFrame:
+    try:
+        scaler = StandardScaler()
+        df = scaler.fit_transform(df)
+        return df
+    except Exception as e:
+        raise Exception(f"Error in scaling features: {features} : {e}")
 def main():
     try:
         # Defining paths & model name
@@ -99,7 +106,11 @@ def main():
         x_train , y_train = prepare_data(train_dataset)
         x_test,y_test = prepare_data(test_dataset)
         # Training the model & fitting the data
-    
+        features_to_scale  = ["Age","Severity","Marital Status"]
+        scaler = StandardScaler()
+        x_train[features_to_scale] = scaler.fit_transform(x_train[features_to_scale])  # Fit and transform training data
+        x_test[features_to_scale] = scaler.transform(x_test[features_to_scale])       # Only transform test data
+
 
         print(f"Train features shape: {x_train.shape}")
         print(f"Train target shape: {y_train.shape}")

@@ -2,12 +2,12 @@
 
 import pandas as pd
 import numpy as np
-import os
-import pickle
+import joblib
 import json
 from sklearn.metrics import r2_score,mean_absolute_error
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
 from dvclive import Live
 import yaml
 
@@ -35,7 +35,7 @@ def load_model(filepath:str):
         with open(filepath,"rb") as f:
             print(f"Loaded model from {filepath}")
 
-            return pickle.load(f)
+            return joblib.load(f)
             
     except Exception as e:
         raise Exception(f"Error loading the model from {filepath} : {e}")
@@ -124,8 +124,8 @@ def save_metrics(metrics_dict:dict,metrics_path:str)->None:
 def main():
     try:
         # Defining data , model and metrics paths
-        train_data_path = "./data/processed/train_processed.csv"
-        test_data_path = "./data/processed/test_processed.csv"
+        train_data_path = "./data/interim/train_engineered.csv"
+        test_data_path = "./data/interim/test_engineered.csv"
         model_path = "models/model.joblib"
         metrics_path = "reports/metrics.json"
     
@@ -138,7 +138,10 @@ def main():
 
         # Defining X-train & Y-train
         X_train , Y_train = prepare_data(train_data)
-
+        features_to_scale  = ["Age","Severity","Marital Status"]
+        scaler = StandardScaler()
+        X_train[features_to_scale] = scaler.fit_transform(X_train[features_to_scale])  # Fit and transform training data
+        X_test[features_to_scale] = scaler.transform(X_test[features_to_scale])       # Only transform test data
         # Loading Model
         model = load_model(model_path)
        
@@ -148,6 +151,7 @@ def main():
        
         # # Saving results of metrics
         save_metrics(metrics,metrics_path)
+        print(X_train.head())
     except Exception as e:
         raise Exception(f"Error Occured  : {e}")
 

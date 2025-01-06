@@ -4,9 +4,9 @@ kwargs:
   n_estimators: 300
   min_child_weight: 2
   max_depth: 10
-  learning_rate: 0.017
-  reg_lambda: 0.5555555555555556
+  learning_rate: 0.016681005372000592
+  lambda: 0.5555555555555556
   gamma: 0.0
   colsample_bytree: 0.8888888888888888
-  reg_alpha: 0.7777777777777777
+  alpha: 0.7777777777777777
 model_name: xgboost

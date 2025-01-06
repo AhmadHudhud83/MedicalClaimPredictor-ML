@@ -6,11 +6,11 @@ data_preprocessing:
   upper_quantile: 0.88
   lower_quantile: 0.14
   apply_winsorization: True
-  transformation_type: "cube"
+  transformation_type: "custom"
   apply_boxcox: False
 
 model_building:
-  model_name: "xgboost"    # Model to use: RandomForest, DecisionTree, or XGBoost
+  model_name: "xgboost"   
   kwargs:
     subsample: 0.7777777777777778
     n_estimators: 300
@@ -20,12 +20,4 @@ model_building:
     reg_lambda: 0.5555555555555556
     gamma: 0.0
     colsample_bytree: 0.8888888888888888
-    reg_alpha: 0.7777777777777777  # Replaced `alpha` with `reg_alpha` for XGBoost
-
-# Optional: Add other model configurations here if you want to experiment with different models
-# model_building:
-#   model_name: "random_forest"  # Change to RandomForestRegressor
-#   kwargs:
-#     n_estimators: 100
-#     max_depth: 10
-#     min_samples_split: 2
+    reg_alpha: 0.7777777777777777  

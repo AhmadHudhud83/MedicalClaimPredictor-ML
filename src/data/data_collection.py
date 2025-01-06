@@ -1,6 +1,5 @@
 # Importing Dependencies
 import pandas as pd
-import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 import yaml
@@ -56,15 +55,14 @@ def main():
         raw_data_path = os.path.join("data","raw")
 
         #Loading dataset , test_size parameter , training & testing sets
+        
         params = load_params(params_filepath)
         test_size = params["data_collection"]["test_size"]
         batch_size = params["data_collection"]["batch_size"]
         dataset = load_data(data_filepath,batch_size)
-        print("shape of raw dataset",dataset.shape) 
         train_data , test_data = split_data(dataset,test_size)
         
 
-        print(train_data.shape)
         #Create data folder 
 
         os.makedirs(raw_data_path,exist_ok=True)

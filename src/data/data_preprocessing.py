@@ -25,23 +25,7 @@ def load_data(filepath:str)->pd.DataFrame:
 #"Unkown" in Matrial Status will be replaced with most frequent value , since it does not represent a high percantage of values , and it got less impact on target label
 
 
-#Function for handling missing values of Marital Status
-def handle_missing_values(df:pd.DataFrame) ->pd.DataFrame:
-    
-    try:
 
-        # Finding most frequent value to replace with
-       # most_frequent_category= df["Marital Status"].mode()[0]
-        
-        # Replace missing values/Unkowns with most_frequent_category
-        #df["Marital Status"] = df["Marital Status"].replace("Unknown", most_frequent_category) 
-
-        return df
-
-    except Exception as e :
-        raise Exception(f"Error filling missing values : {e}")
-
-    
 
 
 # Saving Dataset function as an output of the stage
@@ -61,74 +45,52 @@ def save_data(df:pd.DataFrame,filepath:str)->None:
 # and the splitted train set off test set will prevent data leakge.
 
 #Function for Target Encoding
-def target_encoder(df:pd.DataFrame)->pd.DataFrame:
+def target_encoder(df:pd.DataFrame,col:str,targetCol:str)->pd.DataFrame:
 
     try:
 
         #Calculating the mean target value (Amount) for each category in Specialty
-        specialty_means = df.groupby("Specialty")['Amount'].mean()
+        specialty_means = df.groupby(col)[targetCol].mean()
 
         # Mapping means to the Specialty column
-        df['Specialty'] = df["Specialty"].map(specialty_means)
+        df[col] = df[targetCol].map(specialty_means)
         return df
     except Exception as e :
         raise Exception(f"Error in applying target encoder : {e}")
 
 # Label Encoding Function for Gender & Marital Status
-def label_encoder(df:pd.DataFrame)->pd.DataFrame:
+def label_encoder(df:pd.DataFrame,col:str)->pd.DataFrame:
     try:
 
         #For Gender Column
         label_encoder = LabelEncoder()
-        df['Gender'] = label_encoder.fit_transform(df['Gender'])
-        df['Marital Status'] = label_encoder.fit_transform(df['Marital Status'])
-        #For Marital Status Column
-        ##########df.replace({'Marital Status':{'Married':4,'Divorced':3,'Single':2,'Widowed':1}},inplace=True )
+        df[col] = label_encoder.fit_transform(df[col])
+    
         return df
     except Exception as e :
         raise Exception(f"Error in applying label encoder : {e}")
 
 
 #One hot Encoding Function for Insurance Column
-def one_hot_encoder(df:pd.DataFrame)->pd.DataFrame:
+def one_hot_encoder(df:pd.DataFrame,col:str)->pd.DataFrame:
   try:
       
     encoder = OneHotEncoder(sparse_output=False)
-    encoded_data = encoder.fit_transform(df[['Insurance']])
-    encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(['Insurance']))
+    encoded_data = encoder.fit_transform(df[[col]])
+    encoded_df = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out([col]))
     df = pd.concat([df, encoded_df], axis=1)
 
     # Dropping the original Insurance column
-    df.drop('Insurance', axis=1, inplace=True)
+    df.drop(col, axis=1, inplace=True)
 
-
-
-    # Reshape the 'Specialty' column to a 2D array (necessary for sklearn)
-    specialty_encoded = encoder.fit_transform(df[['Specialty']])
-
-    # Convert the encoded array into a DataFrame with column names as the unique values in 'Specialty'
-    encoded_df = pd.DataFrame(specialty_encoded, columns=encoder.get_feature_names_out(['Specialty']))
-
-    # Concatenate the encoded columns with the original dataset (excluding the original 'Specialty' column)
-    df = pd.concat([df.drop('Specialty', axis=1), encoded_df], axis=1)
-
-    # Checking the first few rows of the updated dataset
-    print("HEREE " ,df.head())
     return df
   
   except Exception as e:
       raise Exception(f"Error in applying one hot encoder : {e}")
 
 #Features Scaler Function
-def scaler(df:pd.DataFrame,features:list)->None:
-    try:
 
-     scaler = StandardScaler()
-     df[features] = scaler.fit_transform(df[features])
-     return df
-    except Exception as e:
-        raise Exception(f"Error in scaling features : {features}  : {e}")
-    
+
 
 
 # Winsorization function for the target variable
@@ -150,7 +112,7 @@ def transform(df : pd.DataFrame,col:str,transformation_type,apply_boxcox:bool) -
      
     transformation_types = {
             "square":lambda x: np.square(x),
-            "cube":lambda x :x**2.5,
+            "custom":lambda x :x**2.5,
             "sqrt":lambda x : x,
             "log2":lambda x :np.log2(x),
             
@@ -232,52 +194,37 @@ def main():
         test_data = load_data(os.path.join(raw_data_path,"test.csv"))
         
 
-        # Applying missing values handlers for training & testing sets
-        train_df1 = handle_missing_values(train_data)
-        test_df1 = handle_missing_values(test_data)
+  
 
 
         
         #Applying transformation functions for training & testing sets
 
             
-        train_df2 = transform(train_df1,"Amount",transformation_type,apply_boxcox)
-        test_df2 = transform(test_df1,"Amount",transformation_type,apply_boxcox)
+        train_df = transform(train_data,"Amount",transformation_type,apply_boxcox)
+        test_df = transform(test_data,"Amount",transformation_type,apply_boxcox)
 
         # winsorization flag
         if apply_winsorization:
-              train_df2= winsorization(train_df2,"Amount",lower_quantile,upper_quantile)
-              test_df2 = winsorization(test_df2,"Amount",lower_quantile,upper_quantile)
+              train_df= winsorization(train_df,"Amount",lower_quantile,upper_quantile)
+              test_df = winsorization(test_df,"Amount",lower_quantile,upper_quantile)
             
 
         #Applying encoding functions for training & testing sets
 
-        
-        train_df3 = label_encoder(train_df2)
-        test_df3 = label_encoder(test_df2)
-        train_df4 = one_hot_encoder(train_df3)
-        test_df4 = one_hot_encoder(test_df3)
-  
+        # Label Encoding
+        train_df = label_encoder(train_df,'Gender')
+        test_df = label_encoder(test_df,'Gender')
 
-        #Applying scaler function for training & testing sets
+        # One hot Encoding
+        train_df = one_hot_encoder(train_df,"Insurance")
+        test_df = one_hot_encoder(test_df,"Insurance")
+        train_df = one_hot_encoder(train_df,"Specialty")
+        test_df = one_hot_encoder(test_df,"Specialty")
 
-        # features_to_scale = ['Age', 'Marital Status', 'Severity']
-        # train_df_final= scaler(train_df4,features_to_scale)
-        # test_df_final=  scaler (test_df4,features_to_scale)
-
-
-
-        #Checking if 4 value is removed from Martial Status column
-        unique_values = train_df4['Marital Status'].unique()
-        print(unique_values)
-
-        #Checking some samples of preprocessed data
-        print(train_df4.head())
-
-        #Checking Outliers for target variable using box plot
     
 
-        target_plots(train_df4,"Amount","Training Dataset")
+        target_plots(train_df,"Amount","Training Dataset")
 
  
         #Creating folder for processed data
@@ -286,11 +233,11 @@ def main():
 
         # Storing Processed training & testing sets as outputs
      
-        save_data(train_df4,os.path.join(processed_data_path,"train_processed.csv"))
-        save_data(test_df4,os.path.join(processed_data_path,"test_processed.csv"))
-        print(test_df4.info())
+        save_data(train_df,os.path.join(processed_data_path,"train_processed.csv"))
+        save_data(test_df,os.path.join(processed_data_path,"test_processed.csv"))
+        print(train_data.info())
 
-        train_df4.hist(bins =50 ,figsize=(12,8))
+        train_df.hist(bins =50 ,figsize=(12,8))
         plt.show()
     except Exception as e :
         raise Exception(f"An Error occured : {e}")
