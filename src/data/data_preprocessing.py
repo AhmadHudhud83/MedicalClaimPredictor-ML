@@ -4,10 +4,12 @@ import numpy as np
 import os
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
 import seaborn as sns
 import matplotlib.pyplot as plt
 import yaml
 from scipy.stats import boxcox
+
 
 #Reading the Train & Test Datasets
 def load_data(filepath:str)->pd.DataFrame:
@@ -29,10 +31,10 @@ def handle_missing_values(df:pd.DataFrame) ->pd.DataFrame:
     try:
 
         # Finding most frequent value to replace with
-        most_frequent_category= df["Marital Status"].mode()[0]
+       # most_frequent_category= df["Marital Status"].mode()[0]
         
         # Replace missing values/Unkowns with most_frequent_category
-        df["Marital Status"] = df["Marital Status"].replace("Unknown", most_frequent_category) 
+        #df["Marital Status"] = df["Marital Status"].replace("Unknown", most_frequent_category) 
 
         return df
 
@@ -77,10 +79,11 @@ def label_encoder(df:pd.DataFrame)->pd.DataFrame:
     try:
 
         #For Gender Column
-        df.replace({'Gender':{'Male':1,'Female':0}},inplace=True)
-        
+        label_encoder = LabelEncoder()
+        df['Gender'] = label_encoder.fit_transform(df['Gender'])
+        df['Marital Status'] = label_encoder.fit_transform(df['Marital Status'])
         #For Marital Status Column
-        df.replace({'Marital Status':{'Married':4,'Divorced':3,'Single':2,'Widowed':1}},inplace=True )
+        ##########df.replace({'Marital Status':{'Married':4,'Divorced':3,'Single':2,'Widowed':1}},inplace=True )
         return df
     except Exception as e :
         raise Exception(f"Error in applying label encoder : {e}")
@@ -100,12 +103,6 @@ def one_hot_encoder(df:pd.DataFrame)->pd.DataFrame:
 
 
 
-
-
-
-    # Initialize the OneHotEncoder
-    encoder = OneHotEncoder(sparse_output=False, drop='first')  # drop='first' to avoid the dummy variable trap
-
     # Reshape the 'Specialty' column to a 2D array (necessary for sklearn)
     specialty_encoded = encoder.fit_transform(df[['Specialty']])
 
@@ -116,7 +113,7 @@ def one_hot_encoder(df:pd.DataFrame)->pd.DataFrame:
     df = pd.concat([df.drop('Specialty', axis=1), encoded_df], axis=1)
 
     # Checking the first few rows of the updated dataset
-    # df_encoded.head()
+    print("HEREE " ,df.head())
     return df
   
   except Exception as e:
@@ -154,7 +151,7 @@ def transform(df : pd.DataFrame,col:str,transformation_type,apply_boxcox:bool) -
     transformation_types = {
             "square":lambda x: np.square(x),
             "cube":lambda x :x**2.5,
-            "sqrt":lambda x : np.sqrt(x),
+            "sqrt":lambda x : x,
             "log2":lambda x :np.log2(x),
             
      }
@@ -236,63 +233,64 @@ def main():
         
 
         # Applying missing values handlers for training & testing sets
-        train_data_processed = handle_missing_values(train_data)
-        test_data_processed = handle_missing_values(test_data)
+        train_df1 = handle_missing_values(train_data)
+        test_df1 = handle_missing_values(test_data)
 
 
         
         #Applying transformation functions for training & testing sets
 
             
-        train_data_processed= transform(train_data_processed,"Amount",transformation_type,apply_boxcox)
-        test_data_processed = transform(test_data_processed,"Amount",transformation_type,apply_boxcox)
+        train_df2 = transform(train_df1,"Amount",transformation_type,apply_boxcox)
+        test_df2 = transform(test_df1,"Amount",transformation_type,apply_boxcox)
 
         # winsorization flag
         if apply_winsorization:
-              train_data_processed= winsorization(train_data_processed,"Amount",lower_quantile,upper_quantile)
-              test_data_processed = winsorization(test_data_processed,"Amount",lower_quantile,upper_quantile)
+              train_df2= winsorization(train_df2,"Amount",lower_quantile,upper_quantile)
+              test_df2 = winsorization(test_df2,"Amount",lower_quantile,upper_quantile)
             
 
         #Applying encoding functions for training & testing sets
-        encoding_funcs = [label_encoder,one_hot_encoder]
 
-        for function in encoding_funcs:
-            train_data_processed= function(train_data_processed)
-            test_data_processed=function(test_data_processed)
+        
+        train_df3 = label_encoder(train_df2)
+        test_df3 = label_encoder(test_df2)
+        train_df4 = one_hot_encoder(train_df3)
+        test_df4 = one_hot_encoder(test_df3)
+  
 
         #Applying scaler function for training & testing sets
 
-        features_to_scale = ["Severity","Age","Marital Status"]
-        train_data_processed= scaler(train_data_processed,features_to_scale)
-        test_data_processed=  scaler  (test_data_processed,features_to_scale)
+        features_to_scale = ['Age', 'Marital Status', 'Severity']
+        train_df_final= scaler(train_df4,features_to_scale)
+        test_df_final=  scaler (test_df4,features_to_scale)
 
 
 
         #Checking if 4 value is removed from Martial Status column
-        unique_values = train_data_processed['Marital Status'].unique()
+        unique_values = train_df_final['Marital Status'].unique()
         print(unique_values)
 
         #Checking some samples of preprocessed data
-        print(train_data_processed.head())
+        print(train_df_final.head())
 
         #Checking Outliers for target variable using box plot
     
 
-        target_plots(train_data_processed,"Amount","Training Dataset")
+        target_plots(train_df_final,"Amount","Training Dataset")
 
-
-
+ 
         #Creating folder for processed data
         
         os.makedirs(processed_data_path,exist_ok=True)
 
         # Storing Processed training & testing sets as outputs
      
-        save_data(train_data_processed,os.path.join(processed_data_path,"train_processed.csv"))
-        save_data(test_data_processed,os.path.join(processed_data_path,"test_processed.csv"))
-        print(train_data_processed.info())
+        save_data(train_df_final,os.path.join(processed_data_path,"train_processed.csv"))
+        save_data(test_df_final,os.path.join(processed_data_path,"test_processed.csv"))
+        print(train_df_final.info())
 
-        train_data_processed.hist(bins =50 ,figsize=(12,8))
+        train_df_final.hist(bins =50 ,figsize=(12,8))
         plt.show()
     except Exception as e :
         raise Exception(f"An Error occured : {e}")

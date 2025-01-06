@@ -1,32 +1,31 @@
 data_collection:
-  batch_size : 79210         # max value for data set is  : 79210
-  test_size: 0.3
-
+  batch_size: 79210        # max value for dataset is: 79210
+  test_size: 0.3           # Split of data (70% training, 30% test)
 
 data_preprocessing:
   upper_quantile: 0.88
   lower_quantile: 0.14
   apply_winsorization: True
-  transformation_type : "cube"
-  apply_boxcox: false
+  transformation_type: "cube"
+  apply_boxcox: False
 
 model_building:
-  model_name: "xgboost"
-  kwargs: {}
-    # colsample_bytree: 1
-    # gamma: 0.32
-    # learning_rate: 0.012
-    # max_depth: 10
-    # min_child_weight: 1
-    # n_estimators: 494
-    # subsample: 0.85
+  model_name: "xgboost"    # Model to use: RandomForest, DecisionTree, or XGBoost
+  kwargs:
+    subsample: 0.7777777777777778
+    n_estimators: 300
+    min_child_weight: 2
+    max_depth: 10
+    learning_rate: 0.017
+    reg_lambda: 0.5555555555555556
+    gamma: 0.0
+    colsample_bytree: 0.8888888888888888
+    reg_alpha: 0.7777777777777777  # Replaced `alpha` with `reg_alpha` for XGBoost
 
-    # bootstrap: True
-    # n_estimators: 271
-    # max_depth: 13
-    # min_samples_leaf: 1
-    # min_samples_split : 18
-
-    # max_depth: 50
-    # min_samples_split : 40
-    # max_features: "sqrt"
+# Optional: Add other model configurations here if you want to experiment with different models
+# model_building:
+#   model_name: "random_forest"  # Change to RandomForestRegressor
+#   kwargs:
+#     n_estimators: 100
+#     max_depth: 10
+#     min_samples_split: 2

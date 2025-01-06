@@ -3,7 +3,9 @@
 .venv/
 #Exclude .dvc folder
 .dvc/
-
+# Excluding dev notebooks
+dev.ipynb
+dev2.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

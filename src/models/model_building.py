@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import os
-import pickle
+import joblib
 import yaml
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
@@ -30,9 +30,9 @@ def load_data(filepath:str)->pd.DataFrame:
 # Preparing Training & Testing Datasets function
 def prepare_data(df:pd.DataFrame)->tuple[pd.DataFrame,pd.Series]:
     try:
-        x_train = df.drop(columns=["Amount"],axis= 1)
-        y_train = df["Amount"]
-        return x_train , y_train
+        X = df.drop('Amount',axis= 1)
+        Y = df["Amount"]
+        return X , Y
     except Exception as e:
         raise Exception(f"Error Preparing Datasets : {e}")
 
@@ -71,21 +71,21 @@ def save_model(model, filepath:str) -> None:
     try:
         with open(filepath,"wb") as f:
 
-            pickle.dump(model,f)
+            joblib.dump(model,f)
 
     except Exception as e:
         raise Exception(f"Error occured during saving the model to path : {filepath}  : {e}")
-checker=2
+
 def main():
     try:
         # Defining paths & model name
         params_path = "params.yaml"
         train_data_path = "./data/interim/train_engineered.csv"
         test_data_path = "./data/interim/test_engineered.csv"
-        model_save_path = "models/model.pkl"
+        model_save_path = "models/model.joblib"
 
         # Loading hyperparameters    
-        
+    
         
         params = load_params(params_path)
         model_name = params["model_building"]["model_name"]
@@ -93,26 +93,29 @@ def main():
      
         # Loading the train dataset 
         train_dataset =load_data(train_data_path)
-       
+        test_dataset = load_data(test_data_path)
+      
         # Preparing x_train , y_train data for fitting
         x_train , y_train = prepare_data(train_dataset)
-        
+        x_test,y_test = prepare_data(test_dataset)
         # Training the model & fitting the data
+    
 
+        print(f"Train features shape: {x_train.shape}")
+        print(f"Train target shape: {y_train.shape}")
+        print(f"Test features shape: {x_test.shape}")
+        print(f"Test target shape: {y_test.shape}")
 
+    
+        model = train_model(x_train=x_train,y_train=y_train,kwargs=model_kwargs,model_name=model_name)
 
-        model =  train_model(x_train,y_train,model_name=model_name,kwargs=model_kwargs)
-        
         # Saving the model
         save_model(model,model_save_path)
 
     except Exception as e:
-        print(f"An Error Occured : {e}")
+        raise Exception(f"An Error Occured : {e}")
     
-    # Printing shape for debugging issues
-        print(x_train.shape)
-        print(y_train.shape)
-
+  
     
 
 if __name__ == "__main__":

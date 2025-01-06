@@ -37,11 +37,11 @@ stages:
     - model_building.model_name
     - model_building.kwargs
     outs:
-    - models/model.pkl
+    - models/model.joblib
   model_evaluation:
     cmd: python src/models/model_evaluation.py
     deps:
-    - models/model.pkl
+    - models/model.joblib
     - src/models/model_evaluation.py
     metrics:
     - reports/metrics.json

@@ -17,7 +17,7 @@ def load_data(filepath: str,batch_size:int)->pd.DataFrame:
 
 
 #Load params function
-def load_params(filepath : str)->float:
+def load_params(filepath : str):
     try:
         with open(filepath,"r") as f:
             params = yaml.safe_load(f)
@@ -62,11 +62,12 @@ def main():
         dataset = load_data(data_filepath,batch_size)
         print("shape of raw dataset",dataset.shape) 
         train_data , test_data = split_data(dataset,test_size)
+        
 
-
+        print(train_data.shape)
         #Create data folder 
 
-        os.makedirs(raw_data_path)
+        os.makedirs(raw_data_path,exist_ok=True)
 
         #Storing training & testing sets as csv files
         
