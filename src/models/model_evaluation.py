@@ -53,12 +53,10 @@ def plot(Y:np.ndarray,data_prediction:pd.Series,set:str,color:str)->str:
         plt.savefig(plot_path)
         plt.show()
         plt.close()
-
         return plot_path
     except Exception as e :
         raise Exception(f"Error occured during plotting predicated vs actual values : {e}")
 
-        
 
 # Model Evaluation function
 def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.DataFrame,Y_train :pd.Series )->dict:
@@ -68,21 +66,17 @@ def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.Da
         test_size = params["data_collection"]["test_size"]
         kwargs= params["model_building"]["kwargs"]
         model_name = params["model_building"]["model_name"]
-        # Predicting test & train sets
-        
 
+        # Predicting test & train sets
         test_data_prediction = model.predict(X_test)
         train_data_prediction = model.predict(X_train)
-
 
         # Defining r square measure
         r2_test = r2_score(Y_test, test_data_prediction)
         r2_train = r2_score(Y_train,train_data_prediction)
         mae = mean_absolute_error(test_data_prediction,Y_test)
        
-        
         # Plotting test & train datasets vs actual values diagrams
-
         test_plot = plot(Y_test,test_data_prediction,"Test","green")
         train_plot = plot(Y_train,train_data_prediction,"Train","blue")
 
@@ -105,7 +99,6 @@ def evaluation_model(model,X_test: pd.DataFrame,Y_test :pd.Series,X_train: pd.Da
                  "mae":mae
             }
         print(f"Model Evaluation Results: {metrics_dict}")
-
         return metrics_dict
     except Exception as e:
         raise Exception(f"Error occured during model evaluation : {e}")
@@ -138,10 +131,8 @@ def main():
 
         # Defining X-train & Y-train
         X_train , Y_train = prepare_data(train_data)
-        features_to_scale  = ["Age","Severity","Marital Status"]
-        scaler = StandardScaler()
-        X_train[features_to_scale] = scaler.fit_transform(X_train[features_to_scale])  # Fit and transform training data
-        X_test[features_to_scale] = scaler.transform(X_test[features_to_scale])       # Only transform test data
+
+
         # Loading Model
         model = load_model(model_path)
        
@@ -154,8 +145,6 @@ def main():
         print(X_train.head())
     except Exception as e:
         raise Exception(f"Error Occured  : {e}")
-
-
 
 if __name__ == "__main__":
     main()

@@ -3,9 +3,9 @@ data_collection:
   test_size: 0.3           # Split of data (70% training, 30% test)
 
 data_preprocessing:
-  upper_quantile: 0.88
-  lower_quantile: 0.14
-  apply_winsorization: True
+  upper_quantile: 0.95
+  lower_quantile: 0.05
+  apply_winsorization: False
   transformation_type: "custom"
   apply_boxcox: False
 

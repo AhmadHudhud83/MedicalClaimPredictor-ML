@@ -112,9 +112,10 @@ def transform(df : pd.DataFrame,col:str,transformation_type,apply_boxcox:bool) -
      
     transformation_types = {
             "square":lambda x: np.square(x),
-            "custom":lambda x :x**2.5,
-            "sqrt":lambda x : x,
+            "custom":lambda x :x**0.85,
+            "sqrt":lambda x :np.sqrt(x) ,
             "log2":lambda x :np.log2(x),
+            "false":lambda x: x
             
      }
 
@@ -192,15 +193,8 @@ def main():
         # Loading Datasets
         train_data = load_data(os.path.join(raw_data_path,"train.csv"))
         test_data = load_data(os.path.join(raw_data_path,"test.csv"))
-        
 
-  
-
-
-        
         #Applying transformation functions for training & testing sets
-
-            
         train_df = transform(train_data,"Amount",transformation_type,apply_boxcox)
         test_df = transform(test_data,"Amount",transformation_type,apply_boxcox)
 
