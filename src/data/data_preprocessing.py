@@ -261,23 +261,23 @@ def main():
 
         #Applying scaler function for training & testing sets
 
-        features_to_scale = ['Age', 'Marital Status', 'Severity']
-        train_df_final= scaler(train_df4,features_to_scale)
-        test_df_final=  scaler (test_df4,features_to_scale)
+        # features_to_scale = ['Age', 'Marital Status', 'Severity']
+        # train_df_final= scaler(train_df4,features_to_scale)
+        # test_df_final=  scaler (test_df4,features_to_scale)
 
 
 
         #Checking if 4 value is removed from Martial Status column
-        unique_values = train_df_final['Marital Status'].unique()
+        unique_values = train_df4['Marital Status'].unique()
         print(unique_values)
 
         #Checking some samples of preprocessed data
-        print(train_df_final.head())
+        print(train_df4.head())
 
         #Checking Outliers for target variable using box plot
     
 
-        target_plots(train_df_final,"Amount","Training Dataset")
+        target_plots(train_df4,"Amount","Training Dataset")
 
  
         #Creating folder for processed data
@@ -286,11 +286,11 @@ def main():
 
         # Storing Processed training & testing sets as outputs
      
-        save_data(train_df_final,os.path.join(processed_data_path,"train_processed.csv"))
-        save_data(test_df_final,os.path.join(processed_data_path,"test_processed.csv"))
-        print(train_df_final.info())
+        save_data(train_df4,os.path.join(processed_data_path,"train_processed.csv"))
+        save_data(test_df4,os.path.join(processed_data_path,"test_processed.csv"))
+        print(test_df4.info())
 
-        train_df_final.hist(bins =50 ,figsize=(12,8))
+        train_df4.hist(bins =50 ,figsize=(12,8))
         plt.show()
     except Exception as e :
         raise Exception(f"An Error occured : {e}")
