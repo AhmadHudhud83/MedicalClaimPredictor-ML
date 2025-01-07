@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insurance Claim Prediction</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery for AJAX -->
+  </head>
+  <body>
+    <div class="container">
+      <!-- Team Information -->
+      <div class="team-info">
+        <h2>Project Title: Insurance Claim Prediction</h2>
+        <p>
+          <span class="name">Ahmad Hudhud</span> |
+          <span class="name">Mohammad Sayeh</span> |
+          <span class="name">Yaqoob Hanbali</span>
+        </p>
+        <p class="supervisor">Supervised by: Dr. Adnan Salman</p>
+      </div>
+
+      <h1>Insurance Claim Prediction</h1>
+      <form id="predictionForm" action="/predict" method="POST">
+        <!-- Severity Field -->
+        <div class="form-group">
+          <label for="severity">Severity (1-9):</label>
+          <select id="severity" name="severity" required>
+            <option value="" disabled selected>Select Severity Level</option>
+            <option value="1">1 - Low</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9 - High</option>
+          </select>
+        </div>
+
+        <!-- Age Field -->
+        <div class="form-group">
+          <label for="age">Age:</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            required
+            placeholder="Enter age"
+          />
+        </div>
+
+        <!-- Specialty Field -->
+        <div class="form-group">
+          <label for="specialty">Specialty:</label>
+          <select id="specialty" name="specialty" required>
+            <option value="" disabled selected>
+              Select Doctor's specialty
+            </option>
+            <option value="Family Practice">Family Practice</option>
+            <option value="General Surgery">General Surgery</option>
+            <option value="OBGYN">OBGYN</option>
+            <option value="Anesthesiology">Anesthesiology</option>
+            <option value="Orthopedic Surgery">Orthopedic Surgery</option>
+            <option value="Internal Medicine">Internal Medicine</option>
+            <option value="Neurology/Neurosurgery">
+              Neurology/Neurosurgery
+            </option>
+            <option value="Emergency Medicine">Emergency Medicine</option>
+            <option value="Ophthamology">Ophthamology</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Urological Surgery">Urological Surgery</option>
+            <option value="Resident">Resident</option>
+            <option value="Radiology">Radiology</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Plastic Surgeon">Plastic Surgeon</option>
+            <option value="Occupational Medicine">Occupational Medicine</option>
+            <option value="Pathology">Pathology</option>
+            <option value="Thoracic Surgery">Thoracic Surgery</option>
+            <option value="Physical Medicine">Physical Medicine</option>
+          </select>
+        </div>
+
+        <!-- Marital Status Field -->
+        <div class="form-group">
+          <label for="maritalStatus">Marital Status:</label>
+          <select id="maritalStatus" name="maritalStatus" required>
+            <option value="" disabled selected>Select Marital Status</option>
+            <option value="Married">Married</option>
+            <option value="Single">Single</option>
+            <option value="Unknown">Unknown</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </select>
+        </div>
+
+        <!-- Insurance Field -->
+        <div class="form-group">
+          <label for="insurance">Insurance:</label>
+          <select id="insurance" name="insurance" required>
+            <option value="" disabled selected>Select Insurance Type</option>
+            <option value="Private">Private</option>
+            <option value="Medicare/Medicaid">Medicare/Medicaid</option>
+            <option value="No Insurance">No Insurance</option>
+            <option value="Unknown">Unknown</option>
+            <option value="Workers Compensation">Workers Compensation</option>
+          </select>
+        </div>
+
+        <!-- Private Attorney Field -->
+        <div class="form-group">
+          <label for="privateAttorney">Private Attorney:</label>
+          <select id="privateAttorney" name="privateAttorney" required>
+            <option value="" disabled selected>Select an option</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+
+        <!-- Gender Field -->
+        <div class="form-group">
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="" disabled selected>Select an option</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+          <button type="submit">Get Prediction</button>
+        </div>
+        <!-- Display Result -->
+        <div class="result">
+          <h3 id="predictionResult"></h3>
+        </div>
+      </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

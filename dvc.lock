@@ -1,12 +1,16 @@
 schema: '2.0'
 stages:
   data_collection:
-    cmd: python src/data_collection.py
+    cmd: python src/data/data_collection.py
     deps:
-    - path: src/data_collection.py
+    - path: src/data/data_collection.py
       hash: md5
-      md5: dc206bcaae4e953690ad01c42407d3e4
-      size: 728
+      md5: a0ff27c8283340834612d1bdf4b34628
+      size: 2328
+    params:
+      params.yaml:
+        data_collection.batch_size: 79210
+        data_collection.test_size: 0.3
     outs:
     - path: data/raw
       hash: md5
@@ -14,20 +18,109 @@ stages:
       size: 3795318
       nfiles: 2
   pre_processing:
-    cmd: python src/data_preprocessing.py
+    cmd: python src/data/data_preprocessing.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: cf8ba707cc3c91e0f2c7d429a67d06f2.dir
+      size: 3795318
+      nfiles: 2
+    - path: src/data/data_preprocessing.py
+      hash: md5
+      md5: 9fe20052d8e1c841032f8fb1368041d1
+      size: 7644
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 43f0b279f111bbc8231c826129ea156f.dir
+      size: 9267203
+      nfiles: 2
+  feature_engineering:
+    cmd: python src/features/feature_engineering.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: e541db986c021a915d255fc66a7bcbae.dir
+      size: 10347758
+      nfiles: 2
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: e85b852c3d2c09cd11306695e0621222
+      size: 1713
+    outs:
+    - path: data/interim
+      hash: md5
+      md5: 63793a3db0e5fc58a24bae33ff62ef62.dir
+      size: 10343767
+      nfiles: 2
+  model_building:
+    cmd: python src/models/model_building.py
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: 63793a3db0e5fc58a24bae33ff62ef62.dir
+      size: 10343767
+      nfiles: 2
+    - path: src/models/model_building.py
+      hash: md5
+      md5: 6ed339cd833c76bf917d0f15849cdc73
+      size: 3861
+    params:
+      params.yaml:
+        model_building.kwargs:
+          subsample: 0.7777777777777778
+          n_estimators: 300
+          min_child_weight: 2
+          max_depth: 10
+          learning_rate: 0.017
+          reg_lambda: 0.5555555555555556
+          gamma: 0.0
+          colsample_bytree: 0.8888888888888888
+          reg_alpha: 0.7777777777777777
+        model_building.model_name: xgboost
+    outs:
+    - path: models/model.joblib
+      hash: md5
+      md5: 1d2a29c3b460e1f6efe6c2e5d5c943e7
+      size: 8098730
+  model_evaluation:
+    cmd: python src/models/model_evaluation.py
+    deps:
+    - path: models/model.joblib
+      hash: md5
+      md5: 1d2a29c3b460e1f6efe6c2e5d5c943e7
+      size: 8098730
+    - path: src/models/model_evaluation.py
+      hash: md5
+      md5: 28f9c71aed4af4b8baf92534c488ee45
+      size: 5276
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: d09a34919bc609bb59a2aca0a24cee95
+      size: 108
+  data_preprocessing:
+    cmd: python src/data/data_preprocessing.py
     deps:
     - path: data/raw
       hash: md5
       md5: 5749989bc7707e82f09bf4d34662e3fc.dir
       size: 3795318
       nfiles: 2
-    - path: src/data_preprocessing.py
+    - path: src/data/data_preprocessing.py
       hash: md5
-      md5: 5840fef51617d0dda45aacf15a45f8bb
-      size: 3846
+      md5: b04661a59db2f813dfa84e726b0dff69
+      size: 8047
+    params:
+      params.yaml:
+        data_preprocessing.apply_boxcox: false
+        data_preprocessing.apply_winsorization: false
+        data_preprocessing.lower_quantile: 0.01
+        data_preprocessing.transformation_type: log2
+        data_preprocessing.upper_quantile: 0.99
     outs:
     - path: data/processed
       hash: md5
-      md5: 0904816833e801c3b9e84d80ac262194.dir
-      size: 8616794
+      md5: e541db986c021a915d255fc66a7bcbae.dir
+      size: 10347758
       nfiles: 2
