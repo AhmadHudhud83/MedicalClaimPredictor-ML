@@ -6,6 +6,7 @@
 # Excluding dev notebooks
 dev.ipynb
 dev2.ipynb
+flask.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

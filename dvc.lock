@@ -40,8 +40,8 @@ stages:
     deps:
     - path: data/processed
       hash: md5
-      md5: 7152cb0c81663574cbb249aa47f98db8.dir
-      size: 10327174
+      md5: e541db986c021a915d255fc66a7bcbae.dir
+      size: 10347758
       nfiles: 2
     - path: src/features/feature_engineering.py
       hash: md5
@@ -50,16 +50,16 @@ stages:
     outs:
     - path: data/interim
       hash: md5
-      md5: 2fd8662a91e629387994f83ce0b74754.dir
-      size: 10319136
+      md5: 63793a3db0e5fc58a24bae33ff62ef62.dir
+      size: 10343767
       nfiles: 2
   model_building:
     cmd: python src/models/model_building.py
     deps:
     - path: data/interim
       hash: md5
-      md5: 2fd8662a91e629387994f83ce0b74754.dir
-      size: 10319136
+      md5: 63793a3db0e5fc58a24bae33ff62ef62.dir
+      size: 10343767
       nfiles: 2
     - path: src/models/model_building.py
       hash: md5
@@ -81,24 +81,24 @@ stages:
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 3aafe7ce9d1e277053d7325d08d841e5
-      size: 9276056
+      md5: 1d2a29c3b460e1f6efe6c2e5d5c943e7
+      size: 8098730
   model_evaluation:
     cmd: python src/models/model_evaluation.py
     deps:
     - path: models/model.joblib
       hash: md5
-      md5: 3aafe7ce9d1e277053d7325d08d841e5
-      size: 9276056
+      md5: 1d2a29c3b460e1f6efe6c2e5d5c943e7
+      size: 8098730
     - path: src/models/model_evaluation.py
       hash: md5
-      md5: c60201e30eac049dc0e690fcb7b4fcd7
-      size: 5307
+      md5: 28f9c71aed4af4b8baf92534c488ee45
+      size: 5276
     outs:
     - path: reports/metrics.json
       hash: md5
-      md5: 17367bc5cd1a68e5090f56505627d7b4
-      size: 107
+      md5: d09a34919bc609bb59a2aca0a24cee95
+      size: 108
   data_preprocessing:
     cmd: python src/data/data_preprocessing.py
     deps:
@@ -109,18 +109,18 @@ stages:
       nfiles: 2
     - path: src/data/data_preprocessing.py
       hash: md5
-      md5: c4e40dbcdf0d25ef1e34a1198d265192
-      size: 8022
+      md5: b04661a59db2f813dfa84e726b0dff69
+      size: 8047
     params:
       params.yaml:
         data_preprocessing.apply_boxcox: false
         data_preprocessing.apply_winsorization: false
-        data_preprocessing.lower_quantile: 0.05
-        data_preprocessing.transformation_type: custom
-        data_preprocessing.upper_quantile: 0.95
+        data_preprocessing.lower_quantile: 0.01
+        data_preprocessing.transformation_type: log2
+        data_preprocessing.upper_quantile: 0.99
     outs:
     - path: data/processed
       hash: md5
-      md5: 7152cb0c81663574cbb249aa47f98db8.dir
-      size: 10327174
+      md5: e541db986c021a915d255fc66a7bcbae.dir
+      size: 10347758
       nfiles: 2

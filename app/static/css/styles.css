@@ -1,0 +1,152 @@
+body {
+  font-family: "Arial", sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 60%;
+  margin: 50px auto;
+  background-color: rgba(165, 31, 31, 0.8);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
+}
+
+.team-info {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.team-info h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.team-info p {
+  font-size: 20px;
+  margin: 10px 0;
+  color: #333;
+  font-weight: bold;
+}
+
+.team-info .name {
+  font-size: 22px;
+  font-weight: 600;
+  color: #28a745;
+  transition: color 0.3s ease;
+}
+
+.team-info .name:hover {
+  color: #218838;
+}
+
+.team-info .supervisor {
+  font-size: 22px;
+  font-weight: 500;
+  color: #f39c12;
+  margin-top: 10px;
+}
+
+.container h1 {
+  font-size: 28px;
+  color: #007bff;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #444;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: #f7f9fc;
+  color: #555;
+  transition: all 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.form-group button {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-group button:hover {
+  background-color: #218838;
+}
+
+.form-group button:active {
+  transform: scale(0.98);
+}
+
+.result {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+  font-size: 18px;
+  text-align: center;
+  color: #333;
+  display: none;
+}
+
+/* Animation for hover effect */
+.form-group select,
+.form-group input {
+  transition: all 0.3s ease;
+}
+
+.form-group select:hover,
+.form-group input:hover {
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+}
+
+/* Adding spacing for better readability */
+.form-group {
+  margin-bottom: 25px;
+}
+.result {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    font-size: 18px;
+    text-align: center;
+    color: #333;
+    display: none;  /* Hidden initially */
+  }
+  

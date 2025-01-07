@@ -3,10 +3,10 @@ data_collection:
   test_size: 0.3           # Split of data (70% training, 30% test)
 
 data_preprocessing:
-  upper_quantile: 0.95
-  lower_quantile: 0.05
+  upper_quantile: 0.99
+  lower_quantile: 0.01
   apply_winsorization: False
-  transformation_type: "custom"
+  transformation_type: "log2"
   apply_boxcox: False
 
 model_building:
@@ -21,3 +21,13 @@ model_building:
     gamma: 0.0
     colsample_bytree: 0.8888888888888888
     reg_alpha: 0.7777777777777777  
+    # alpha: 0.5112067208721862
+    # colsample_bytree: 0.8013909410116493
+    # gamma: 0.13547882125756494
+    # lambda: 0.2331851252237497
+    # learning_rate: 0.017620037959916315
+    # max_depth: 8
+    # min_child_weight: 2
+    # n_estimators: 470
+    # subsample: 0.86285975419418
+        

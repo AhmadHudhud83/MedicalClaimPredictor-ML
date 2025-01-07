@@ -107,12 +107,12 @@ def winsorization(df: pd.DataFrame ,col:str , lower_quantile=0.17 , upper_quanti
 
 #Applying square transforming function to whole target variable
 
-def transform(df : pd.DataFrame,col:str,transformation_type,apply_boxcox:bool) ->pd.DataFrame:
+def transform(df : pd.DataFrame,col:str,transformation_type:str,apply_boxcox:bool) ->pd.DataFrame:
 
      
     transformation_types = {
             "square":lambda x: np.square(x),
-            "custom":lambda x :x**0.85,
+            "custom":lambda x :x**0.8,
             "sqrt":lambda x :np.sqrt(x) ,
             "log2":lambda x :np.log2(x),
             "false":lambda x: x
@@ -148,7 +148,7 @@ def target_plots(df:pd.DataFrame,col:str,label:str)->None:
         sns.boxplot(df[col])
         plt.title(label)
         plt.ylabel(col)
-        plt.show()
+        plt.show(block=False)
 
     #Showing the histogram of distribution
 
@@ -157,7 +157,7 @@ def target_plots(df:pd.DataFrame,col:str,label:str)->None:
         plt.title("Amount Distribution")
         plt.xlabel("Amount")
         plt.ylabel("Frequency")
-        plt.show()
+        plt.show(block=False)
     except Exception as e:
         raise Exception(f"Error plotting box plot for column : {col} :  {e}")
 

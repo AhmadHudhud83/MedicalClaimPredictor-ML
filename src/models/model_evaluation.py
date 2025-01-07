@@ -142,7 +142,6 @@ def main():
        
         # # Saving results of metrics
         save_metrics(metrics,metrics_path)
-        print(X_train.head())
     except Exception as e:
         raise Exception(f"Error Occured  : {e}")
 
