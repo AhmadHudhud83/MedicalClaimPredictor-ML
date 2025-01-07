@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Prediction</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            background-color: rgba(165, 31, 31, 0.8); 
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #c9d6ff, #e2e2e2);
+        }
+
+        .team-info {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .team-info h2 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #007BFF;
+            margin-bottom: 15px;
+        }
+
+        .team-info p {
+            font-size: 20px;
+            margin: 10px 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .team-info .name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #28a745;
+            transition: color 0.3s ease;
+        }
+
+        .team-info .name:hover {
+            color: #218838;
+        }
+
+        .team-info .supervisor {
+            font-size: 22px;
+            font-weight: 500;
+            color: #f39c12;
+            margin-top: 10px;
+        }
+
+        .container h1 {
+            font-size: 28px;
+            color: #007BFF;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            background-color: #f7f9fc;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: #218838;
+        }
+
+        .form-group button:active {
+            transform: scale(0.98);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            color: #333;
+            display: none;
+        }
+
+        /* Animation for hover effect */
+        .form-group select, .form-group input {
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:hover, .form-group input:hover {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Adding spacing for better readability */
+        .form-group {
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Team Information -->
+        <div class="team-info">
+            <h2>Project Title: Insurance Claim Prediction</h2>
+            <p><span class="name">Ahmad Hudhud</span> | <span class="name">Mohammad Sayeh</span> | <span class="name">Yaqoob Hanbali</span></p>
+            <p class="supervisor">Supervised by: Dr. Adnan Salman</p>
+        </div>
+
+        <h1>Insurance Claim Prediction</h1>
+        <form id="predictionForm">
+            <!-- Severity Field -->
+            <div class="form-group">
+                <label class="severity-label" for="severity">Severity (1-9):</label>
+                <select id="severity" class="severity-select" required>
+                    <option value="" disabled selected>Select Severity Level</option>
+                    <option value="1">1 - Low</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9 - High</option>
+                </select>
+            </div>
+
+            <!-- Age Field -->
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" required placeholder="Enter age">
+            </div>
+
+            <!-- Specialty Field -->
+            <div class="form-group">
+                <label class="specialty-label" for="specialty">Specialty:</label>
+                <select id="specialty" required>
+                    <option value="Family Practice">Family Practice</option>
+                    <option value="General Surgery">General Surgery</option>
+                    <option value="OBGYN">OBGYN</option>
+                    <option value="Anesthesiology">Anesthesiology</option>
+                    <option value="Orthopedic Surgery">Orthopedic Surgery</option>
+                    <option value="Internal Medicine">Internal Medicine</option>
+                    <option value="Neurology/Neurosurgery">Neurology/Neurosurgery</option>
+                    <option value="Emergency Medicine">Emergency Medicine</option>
+                    <option value="Ophthamology">Ophthamology</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Urological Surgery">Urological Surgery</option>
+                    <option value="Resident">Resident</option>
+                    <option value="Radiology">Radiology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Plastic Surgeon">Plastic Surgeon</option>
+                    <option value="Occupational Medicine">Occupational Medicine</option>
+                    <option value="Pathology">Pathology</option>
+                    <option value="Thoracic Surgery">Thoracic Surgery</option>
+                    <option value="Physical Medicine">Physical Medicine</option>
+                </select>
+            </div>
+
+            <!-- Marital Status Field -->
+            <div class="form-group">
+                <label class="marital-status-label" for="maritalStatus">Marital Status:</label>
+                <select id="maritalStatus" required>
+                    <option value="Married">Married</option>
+                    <option value="Single">Single</option>
+                    <option value="Unknown">Unknown</option>
+                    <option value="Divorced">Divorced</option>
+                    <option value="Widowed">Widowed</option>
+                </select>
+            </div>
+
+            <!-- Insurance Field -->
+            <div class="form-group">
+                <label class="insurance-label" for="insurance">Insurance:</label>
+                <select id="insurance" required>
+                    <option value="Private">Private</option>
+                    <option value="Medicare/Medicaid">Medicare/Medicaid</option>
+                    <option value="No Insurance">No Insurance</option>
+                    <option value="Unknown">Unknown</option>
+                    <option value="Workers Compensation">Workers Compensation</option>
+                </select>
+            </div>
+
+            <!-- Private Attorney Field -->
+            <div class="form-group">
+                <label class="attorney-label" for="privateAttorney">Private Attorney:</label>
+                <select id="privateAttorney" required>
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+
+            <!-- Gender Field -->
+            <div class="form-group">
+                <label class="gender-label" for="gender">Gender:</label>
+                <select id="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit">Get Prediction</button>
+            </div>
+        </form>
+
+        <!-- Display Result -->
+        <div class="result" id="result">
+            <p id="prediction"></p>
+        </div>
+    </div>
+
+</body>
+</html>
