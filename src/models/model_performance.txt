@@ -1,0 +1,5 @@
+Model: Random Forest Regressor
+Mean Absolute Error: 70934.51418636307
+Mean Squared Error: 13446479745.16195
+R2 Score on Training Data: 0.6395112653726571
+R2 Score on Test Data: 0.6395112653726571
