@@ -14,6 +14,7 @@ Project Organization
     │   ├── interim        <- Intermediate data that has been transformed.
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
+    ├── app                <- Flask API + User Interface
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
