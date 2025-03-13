@@ -69,7 +69,7 @@ Performance metrics for key models are summarized below:
 ## Resources
 - [Dataset](https://www.kaggle.com/datasets/gabrielsantello/medical-malpractice-insurance-dataset)
 - [EDA Notebook](https://www.kaggle.com/code/gabrielsantello/medical-malpractice-xgboost-plotly)
-- [Project Repository](https://github.com/AhmadHudhud83/MedicalClaimPredictor-ML)
+
 
 **Author**: Ahmad Hudhud
 
