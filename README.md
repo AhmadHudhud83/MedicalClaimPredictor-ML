@@ -54,7 +54,7 @@ Performance metrics for key models are summarized below:
 | XGBoost                    | 0.7011     | 0.6605    | 70,102.22    | -              |
 | XGBoost (log2 transform)   | 0.6028     | 0.5507    | 1.783        | -              |
 | XGBoost (sqrt transform)   | 0.6894     | 0.6492    | 7,639.73     | -              |
-| XGBoost (winsorization)    | 0.7761     | 0.7414    | 8,143,094,531,247.49 | - |
+| XGBoost (winsorization)    | 0.7761     | 0.7414    | - | - |
 
 ## Discussion
 - **Preprocessing**: Square root and logarithmic transformations improved generalization, while winsorization showed superficial gains but poor real-world performance.
