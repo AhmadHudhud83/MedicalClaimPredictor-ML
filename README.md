@@ -71,4 +71,5 @@ Performance metrics for key models are summarized below:
 - [EDA Notebook](https://www.kaggle.com/code/gabrielsantello/medical-malpractice-xgboost-plotly)
 - [Project Repository](https://github.com/AhmadHudhud83/MedicalClaimPredictor-ML)
 
-**Authors**: Ahmad Hudhud, Yaqoob Hanbali, Mohammed Sayeh
+**Author**: Ahmad Hudhud
+
